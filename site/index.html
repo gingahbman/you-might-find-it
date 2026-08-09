@@ -442,8 +442,15 @@ stage.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY
 let dragging=false,lx=0,ly=0,pressX=0,pressY=0,pressT=0,lastOpen=0;
 function linkUnder(e){
   if(!document.body.classList.contains('zoomed')) return null;
-  const t=e.target.closest&&e.target.closest('.tile.link');
-  return t&&t.dataset.href?t:null;
+  /* e.target lies here: pointerdown captures the pointer to the stage (for smooth drags),
+     and capture makes the browser fire the click at the stage rather than the tile under
+     the mouse. So ask the hit-tester what is really under the point. elementsFromPoint
+     skips pointer-events:none, so the hover label can never swallow the click. */
+  for(const el of document.elementsFromPoint(e.clientX,e.clientY)){
+    if(el.classList&&el.classList.contains('link')&&el.dataset.href) return el;
+    if(el.id==='stage') break;               // past the tile layers; nothing linked here
+  }
+  return null;
 }
 stage.addEventListener('pointerdown',e=>{dragging=true;lx=pressX=e.clientX;ly=pressY=e.clientY;
   pressT=performance.now();stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
@@ -452,7 +459,7 @@ stage.addEventListener('pointerdown',e=>{dragging=true;lx=pressX=e.clientX;ly=pr
    once you're in colour — that click opens the work instead of digging past it. */
 const DIG=1.7;
 stage.addEventListener('click',e=>{
-  if(Math.hypot(e.clientX-pressX,e.clientY-pressY)>6) return;       // that was a drag
+  if(Math.hypot(e.clientX-pressX,e.clientY-pressY)>9) return;       // that was a drag
   if(performance.now()-pressT>600) return;                          // that was a hold
   const t=linkUnder(e);
   if(t){
@@ -492,7 +499,7 @@ stage.addEventListener('pointermove',e=>{
       label.querySelector('b').textContent='No. '+String(+t.dataset.i+1).padStart(3,'0');
       label.querySelector('span').textContent=t.dataset.p;
       label.querySelector('i').textContent=t.dataset.n;
-      label.querySelector('u').textContent=t.dataset.href?'↗ open':'';
+      label.querySelector('u').textContent=t.dataset.href?'click to open ↗':'';
       label.style.opacity='1';}
     else label.style.opacity='0';
     return;}
