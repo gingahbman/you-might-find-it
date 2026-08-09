@@ -163,7 +163,7 @@
   <div id="label"><b>No. 000</b><span>—</span><i></i><u></u></div>
   <div class="ui" id="brand"><h1 class="mark">You Might Find It</h1><p class="sub">The Archive · 2018–20XX</p></div>
   <div class="ui" id="meta"><div><b id="count">—</b> works</div><div><b id="pcount">—</b> projects</div><div id="zoomlabel">×1.0</div></div>
-  <div class="ui" id="hint">scroll or pinch to <span>zoom in</span> · drag to explore · double&#8209;click to dive</div>
+  <div class="ui" id="hint">click to <span>dig</span> · drag to explore · scroll or pinch to zoom</div>
   <div class="ui" id="say">
     <div class="lead">Keep digging. You&rsquo;ll know it when you find it.</div>
     <div class="body"><i>X</i> is different for everyone, so a variable is the honest way to
@@ -447,15 +447,22 @@ function linkUnder(e){
 }
 stage.addEventListener('pointerdown',e=>{dragging=true;lx=pressX=e.clientX;ly=pressY=e.clientY;
   pressT=performance.now();stage.classList.add('drag');stage.setPointerCapture(e.pointerId);});
+/* One scoop per click. The shovel isn't just a costume: clicking while it shows digs the
+   view one increment deeper, centred on the spot under the blade. A linked tile still wins
+   once you're in colour — that click opens the work instead of digging past it. */
+const DIG=1.7;
 stage.addEventListener('click',e=>{
-  const t=linkUnder(e);
-  if(!t) return;
   if(Math.hypot(e.clientX-pressX,e.clientY-pressY)>6) return;       // that was a drag
   if(performance.now()-pressT>600) return;                          // that was a hold
-  const now=performance.now();
-  if(now-lastOpen<500) return;                                      // second half of a double-click
-  lastOpen=now;
-  window.open(t.dataset.href,'_blank','noopener');
+  const t=linkUnder(e);
+  if(t){
+    const now=performance.now();
+    if(now-lastOpen<500) return;                                    // one tab per double-tap
+    lastOpen=now;
+    window.open(t.dataset.href,'_blank','noopener');
+    return;
+  }
+  if(nearMark(e.clientX,e.clientY)) zoomAt(e.clientX,e.clientY,DIG);
 });
 /* Is the pointer on the mark, or close enough to count as "around" it? Screen point back
    through the world transform to a grid cell, then check that cell and a small halo. A
@@ -493,8 +500,7 @@ stage.addEventListener('pointermove',e=>{
 function endDrag(){dragging=false;stage.classList.remove('drag');}
 stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);
 stage.addEventListener('pointerleave',()=>{if(!dragging)label.style.opacity='0';});
-stage.addEventListener('dblclick',e=>{e.preventDefault();if(linkUnder(e))return;
-  if(st.s>fit*3.2)reset();else zoomAt(e.clientX,e.clientY,(fit*6.5)/st.s);});
+
 let pinch=null;
 stage.addEventListener('touchstart',e=>{if(e.touches.length===2){const a=e.touches[0],b=e.touches[1];
   pinch={d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),x:(a.clientX+b.clientX)/2,y:(a.clientY+b.clientY)/2};dragging=false;}},{passive:false});
