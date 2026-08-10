@@ -76,7 +76,7 @@
   #label b{color:#8b8778;font-weight:400;margin-right:10px;}
   #label i{color:#8b8778;font-style:normal;margin-left:10px;text-transform:none;letter-spacing:.06em;}
   #label u{color:#e9c46a;text-decoration:none;margin-left:12px;letter-spacing:.14em;}
-  body.zoomed #colour .tile.link{cursor:pointer;}
+  body.deep #colour .tile.link{cursor:pointer;}
   .ui{position:fixed;z-index:15;user-select:none;}
   #brand{left:38px;top:32px;}
   #brand .mark{font-family:"Times New Roman",Georgia,serif;font-size:clamp(19px,1.5vw,24px);
@@ -441,7 +441,7 @@ stage.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY
    doing both, and a second open inside half a second is ignored. */
 let dragging=false,lx=0,ly=0,pressX=0,pressY=0,pressT=0,lastOpen=0;
 function linkUnder(e){
-  if(!document.body.classList.contains('zoomed')) return null;
+  if(!document.body.classList.contains('deep')) return null;
   /* e.target lies here: pointerdown captures the pointer to the stage (for smooth drags),
      and capture makes the browser fire the click at the stage rather than the tile under
      the mouse. So ask the hit-tester what is really under the point. elementsFromPoint
@@ -458,6 +458,11 @@ stage.addEventListener('pointerdown',e=>{dragging=true;lx=pressX=e.clientX;ly=pr
    view one increment deeper, centred on the spot under the blade. A linked tile still wins
    once you're in colour — that click opens the work instead of digging past it. */
 const DIG=1.7;
+/* Links sleep until you have really dug in. Below this depth every click is a scoop —
+   you cannot open anything by accident while you are still looking. ×4.2 is the third
+   scoop, at which point a tile fills a good part of the screen and has earned its click.
+   The hover tag teaches the rule: "dig deeper to open" below, "click to open" at depth. */
+const LINK_AT=4.2;
 stage.addEventListener('click',e=>{
   if(Math.hypot(e.clientX-pressX,e.clientY-pressY)>9) return;       // that was a drag
   if(performance.now()-pressT>600) return;                          // that was a hold
@@ -499,7 +504,7 @@ stage.addEventListener('pointermove',e=>{
       label.querySelector('b').textContent='No. '+String(+t.dataset.i+1).padStart(3,'0');
       label.querySelector('span').textContent=t.dataset.p;
       label.querySelector('i').textContent=t.dataset.n;
-      label.querySelector('u').textContent=t.dataset.href?'click to open ↗':'';
+      label.querySelector('u').textContent=t.dataset.href?(document.body.classList.contains('deep')?'click to open ↗':'dig deeper to open'):'';
       label.style.opacity='1';}
     else label.style.opacity='0';
     return;}
@@ -548,6 +553,7 @@ function paint(){
   const t=cur.s/fit, col=Math.max(0,Math.min(1,(t-1.03)/(1.24-1.03)));
   colourEl.style.opacity=col.toFixed(3);
   document.body.classList.toggle('zoomed',col>0.4);
+  document.body.classList.toggle('deep',t>=LINK_AT);
   colourEl.style.pointerEvents=col>0.4?'auto':'none';
   say.style.opacity=col>0.4?'0':'1';
   zl.textContent='×'+t.toFixed(1);
