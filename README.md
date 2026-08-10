@@ -264,6 +264,16 @@ left empty, nothing overhangs.
 Deep link / still: `site/index.html?z=5&px=-220&py=-160`. `?rows=42&stroke=8` forces a
 particular figure, which is how the weights were compared.
 
+## Naming
+
+`pretty()` derives a title from the filename, which is fine for `emiko_page_17` and useless
+for a card game. `TITLES` in `projects.py` overrides it per source path, and it exists
+because the ELECTION cards were not merely bland but *wrong*: the two file batches both
+number from 01, so `jpegs1-01` and `pngs2-01` both became "Card 01" — 37 labels pointing at
+two different cards each. All 82 are now named off the artwork (`sheets/cards_*.png` are
+the sheets they were read from). "You're a Liar!" appears six times and "Gasp!" three
+because the deck really does contain that many.
+
 ## Known rough edges
 
 - **Maga Bodega is no longer in the archive.** It's a full-length play with no images
@@ -275,9 +285,7 @@ particular figure, which is how the weights were compared.
 - Both Quickfire app icons are excluded (`EXCLUDE` in `projects.py`) — off-brand, and the
   two files were the same artwork exported twice anyway. That's the place to drop anything
   else you don't want in the mark.
-- The 75 ELECTION cards are labelled `Card 01…39` from their filenames; their real names
-  (THE SAGE, MONK-EY, LETDOWN LARRY…) are legible in `sheets/sheet_03.png` and would have
-  to be typed into a lookup table.
+
 - The "kindness steers your ship" line now appears twice: once as your original screenshot
   (small, as type) and once set properly. Delete the entry in `writing.py` or the source
   image, whichever you prefer.

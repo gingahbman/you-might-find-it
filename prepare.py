@@ -16,7 +16,7 @@ from PIL import (Image, ImageChops, ImageFilter, ImageOps, ImageStat, ImageEnhan
                  ImageDraw, ImageFont)
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from projects import PROJECTS, HEROES, RENAME, EXCLUDE, LINKS
+from projects import PROJECTS, HEROES, RENAME, EXCLUDE, LINKS, TITLES
 from writing import PASSAGES
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -312,7 +312,8 @@ def analyse(inv):
             bw, bh = (2, 1) if ar >= 1.4 else (1, 2) if ar <= 0.72 else (1, 1)
         else:
             bw, bh = block_for(im, hero)
-        specs.append(dict(rel=r["rel"], p=proj, c=cat, k=kind, t=pretty(r["name"]),
+        specs.append(dict(rel=r["rel"], p=proj, c=cat, k=kind,
+                          t=TITLES.get(r["rel"]) or pretty(r["name"]),
                           hero=hero, typey=typey, bw=bw, bh=bh,
                           px=r["px"], sat=r["sat"]))
     for w in PASSAGES:
