@@ -149,7 +149,9 @@ URL never changed could be served stale and hand out stale image URLs from insid
 
 - **Links.** `LINKS` in `projects.py` maps a project's display name to a URL; `prepare.py`
   writes it into the manifest and every tile from a linked project gets `.link` and a
-  `data-href`. Clicking one opens it in a new tab — but only once you're zoomed in, and only
+  `data-href`. Clicking one opens it in a new tab — but only past the depth gate (`LINK_AT`, ×4.2 —
+  the third scoop), so nobody can open a work by accident while still taking in the visual;
+  below the gate every click digs and the hover tag says "dig deeper to open". And only
   if it really was a click: the same gesture drags the mosaic, so the handler checks the
   pointer moved under 6px and was down under 600ms. A linked tile suppresses the
   double-click dive rather than doing both, and a second open inside 500ms is ignored, so
