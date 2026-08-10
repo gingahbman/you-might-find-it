@@ -168,8 +168,18 @@ URL never changed could be served stale and hand out stale image URLs from insid
   X-shaped rather than the mark's bounding box, and the empty wedges between the arms give
   the ordinary pointer. A dozen arithmetic ops per pointermove, no layout reads, and the
   class only changes when the answer does.
-- **The statement** replaced the per-project tally, and fades on zoom exactly as the tally
-  did. `Résumé` and `Contact` sit below it and never fade.
+- **The chrome recedes at depth.** Past the bloom the wordmark, counters and nav drop to
+  0.11 and the controls to 0.72 — a gallery dims the lights around the work. Hovering any
+  of them brings that piece back; Reset stays legible because it is the way out.
+- **The entrance is staged**: mark, then statement, then chrome, about 1.5s of choreography
+  on CSS transition-delays. Those delays are cleared by a `body.entered` class once the
+  intro is done — left in place they would also delay every later fade, and the chrome
+  would take a beat to recede when you dug in, which reads as lag.
+- **The hover pop eases with depth** (`--pop`, 1.28 → 1.06). A 28% jump is a nudge when
+  tiles are small and a shove when one already fills a third of the screen.
+- **Touch reveals before it opens.** A finger has no hover, so on a coarse pointer the first
+  tap on an armed work shows its name and the second opens it. A mouse keeps its single
+  click.
 - **Where the statement sits is not arbitrary.** It is vertically centred against the left
   edge, because an X splays to its full width at the top and bottom — the lower-left corner
   is exactly where a stroke lands, and the text was running under the arm at 1280×800. The
@@ -194,6 +204,15 @@ Verified at 1920×1080, 1440×900, 1280×800, 1152×864, 1024×768, 844×390 and
 **Careful with headless Chrome for this**: it clamps the viewport to a 500px minimum width,
 so `--window-size=390,844` renders at 500×757 and crops — which looks exactly like a broken
 mobile layout and isn't. Check phone widths in a real browser. `shot_size.sh` says so too.
+
+## Type
+
+The chrome and the typeset writing tiles now speak one voice: **DM Serif Display over
+Sora**, self-hosted. The tiles were always set in those two; the page around them fell back
+to Times and Helvetica, which reads as "unstyled" sitting next to a chosen face. Both are
+subset to the 92 characters this page can display — 38 KB for the pair, preloaded, with
+`font-display:swap`. Sizes came down when the faces changed: DM Serif Display carries more
+weight than Times, and Sora runs wider with a taller x-height than Helvetica.
 
 ## The front door
 

@@ -18,11 +18,21 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="preload" as="image" href="plate.jpg?v=786071583">
+<link rel="preload" as="font" type="font/woff2" href="serif.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="sans.woff2" crossorigin>
 <style>
+  /* The page and the typeset writing tiles now speak one voice. The tiles have always been
+     set in DM Serif Display over Sora; the chrome used to fall back to Times and Helvetica,
+     which reads as "unstyled" next to them. Both are subset to the 92 characters this page
+     can actually display — 38 KB for the pair. */
+  @font-face{font-family:"Archive Serif";src:url(serif.woff2) format("woff2");
+    font-weight:400;font-style:normal;font-display:swap;}
+  @font-face{font-family:"Archive Sans";src:url(sans.woff2) format("woff2");
+    font-weight:100 800;font-style:normal;font-display:swap;}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;}
   html,body{height:100%;}
   body{background:radial-gradient(120% 90% at 50% 42%, #15171c 0%, #0b0c10 55%, #050506 100%);
-    color:#e9e6df;font-family:"Helvetica Neue",Arial,sans-serif;overflow:hidden;position:fixed;inset:0;touch-action:none;}
+    color:#e9e6df;font-family:"Archive Sans","Helvetica Neue",Arial,sans-serif;overflow:hidden;position:fixed;inset:0;touch-action:none;}
   /* A shovel, drawn as an inline SVG data URI. This costs nothing at runtime — a CSS cursor
      is decoded once, not a script following the pointer. The dark outer stroke keeps it
      visible over both the black ground and a white product shot, and the squared head is
@@ -68,7 +78,10 @@
   /* In colour the exposure pass no longer applies, so a run of dark screenshots dissolves
      into the page and the mark goes lacy. A hairline on every tile keeps the mass visible. */
   #colour .tile{box-shadow:inset 0 0 0 1px rgba(255,255,255,.085);}
-  body.zoomed #colour .tile:hover{transform:scale(1.28);  /* keep in step with HOVER_POP */z-index:9;box-shadow:0 8px 34px rgba(0,0,0,.7);}
+    /* The pop is a nudge at bloom, when tiles are small; at depth a tile already fills a
+     third of the screen and a 28% jump is a shove. --pop is eased down by the render loop. */
+  body.zoomed #colour .tile:hover{transform:scale(var(--pop,1.28));z-index:9;
+    box-shadow:0 8px 34px rgba(0,0,0,.7);}
   #label{position:fixed;z-index:20;pointer-events:none;opacity:0;transform:translate(-50%,-160%);
     transition:opacity .13s;font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;color:#f4f1ea;
     background:rgba(10,11,14,.88);border:1px solid rgba(233,230,223,.16);padding:7px 13px;border-radius:2px;
@@ -77,9 +90,16 @@
   #label i{color:#8b8778;font-style:normal;margin-left:10px;text-transform:none;letter-spacing:.06em;}
   #label u{color:#e9c46a;text-decoration:none;margin-left:12px;letter-spacing:.14em;}
   body.deep #colour .tile.link{cursor:pointer;}
-  .ui{position:fixed;z-index:15;user-select:none;}
+  .ui{position:fixed;z-index:15;user-select:none;transition:opacity .55s ease;}
+  /* A gallery dims the lights around the work. Past the bloom the chrome recedes to a
+     whisper so nothing white sits on top of a photograph; hovering any of it brings that
+     piece back instantly. Reset keeps its pill and stays legible — it is the way out. */
+  body.zoomed #brand,body.zoomed #meta,body.zoomed #nav{opacity:.11;}
+  body.zoomed #brand:hover,body.zoomed #meta:hover,body.zoomed #nav:hover{opacity:1;}
+  body.zoomed #ctrl{opacity:.72;}
+  body.zoomed #ctrl:hover{opacity:1;}
   #brand{left:38px;top:32px;}
-  #brand .mark{font-family:"Times New Roman",Georgia,serif;font-size:clamp(19px,1.5vw,24px);
+  #brand .mark{font-family:"Archive Serif",Georgia,serif;font-size:clamp(19px,1.5vw,24px);
     letter-spacing:.34em;text-transform:uppercase;padding-left:.34em;font-weight:400;}
   #brand .sub{margin-top:9px;font-size:clamp(11.5px,.86vw,13px);letter-spacing:.26em;
     text-transform:uppercase;color:#8b8778;}
@@ -90,6 +110,14 @@
     font-size:clamp(11px,.8vw,12.5px);letter-spacing:.24em;
     text-transform:uppercase;color:#8b8778;transition:opacity .6s;}
   #hint span{color:#e9e6df;}
+  #hint .tail{color:#8b8778;}
+  /* Between roughly 820 and 1180px the three bottom clusters fight for the same row, and
+     the hint is the one that can afford to say less. */
+  @media (max-width:1180px){ #hint .tail{display:none;} }
+  /* Between 820 and 1080 the three bottom clusters are one long link away from touching.
+     "Colophon" is the shorter word and the righter one for the audience that clicks it. */
+  #nav a .sm{display:none;}
+  @media (max-width:1080px){ #nav a .lg{display:none;} #nav a .sm{display:inline;} }
   #ctrl{right:32px;bottom:28px;display:flex;gap:9px;align-items:center;}
   #ctrl button{height:42px;min-width:42px;border-radius:21px;cursor:pointer;padding:0 15px;
     background:rgba(20,22,27,.72);color:#e9e6df;border:1px solid rgba(233,230,223,.14);
@@ -102,19 +130,28 @@
      narrow, which leaves the left-middle empty at every viewport size. */
   #say{left:38px;top:50%;transform:translateY(-50%);max-width:min(360px,26vw);
     transition:opacity .5s;}
-  #say .lead{font-family:"Times New Roman",Georgia,serif;font-size:clamp(21px,1.62vw,27px);
-    line-height:1.36;color:#e9e6df;letter-spacing:.005em;}
-  #say .body{margin-top:15px;font-size:clamp(14px,1.02vw,16.5px);line-height:1.7;
-    color:#94907f;letter-spacing:.015em;}
+  #say .lead{font-family:"Archive Serif",Georgia,serif;font-size:clamp(20px,1.5vw,25px);
+    line-height:1.3;color:#e9e6df;letter-spacing:.002em;}
+  #say .body{margin-top:16px;font-size:clamp(13.5px,.97vw,15.5px);line-height:1.62;
+    color:#94907f;letter-spacing:.004em;}
   #say .body em{color:#c2bdad;font-style:normal;}
   #say .body i{font-style:italic;color:#c2bdad;}   /* the variable, set as a variable */
-  #say .sig{margin-top:14px;font-family:"Times New Roman",Georgia,serif;font-size:clamp(13px,.95vw,15px);
-    color:#8b8778;letter-spacing:.05em;}
+  #say .sig{margin-top:16px;font-family:"Archive Serif",Georgia,serif;font-size:clamp(12.5px,.86vw,14px);
+    color:#7d7969;letter-spacing:.04em;}
   #nav{left:38px;bottom:34px;display:flex;gap:24px;}
   #nav a{font-size:clamp(12px,.88vw,13.5px);letter-spacing:.22em;text-transform:uppercase;color:#8b8778;
     text-decoration:none;border-bottom:1px solid rgba(139,135,120,.35);padding-bottom:4px;transition:.15s;}
   #nav a:hover{color:#f4f1ea;border-bottom-color:#f4f1ea;}
   .fade{transition:opacity 1.1s ease;}
+  /* The mark arrives, then the statement, then the chrome — about a second and a half of
+     choreography rather than everything landing at once. Reduced motion skips it entirely. */
+  body.booting .ui{opacity:0!important;}
+  #brand{transition-delay:.35s;} #meta{transition-delay:.5s;} #say{transition-delay:.75s;}
+  #nav{transition-delay:.95s;} #ctrl{transition-delay:1.05s;} #hint{transition-delay:1.25s;}
+  /* The stagger is for the entrance only. Left in place it would also delay every later
+     fade — the chrome would take a beat to recede when you dug in, which reads as lag. */
+  body.entered .ui{transition-delay:0s!important;}
+  @media (prefers-reduced-motion: reduce){ .ui{transition-delay:0s!important;} }
 
   /* ---- narrow screens -------------------------------------------------------------
      The mark centres itself in the viewport, so on a phone it would sit right behind the
@@ -130,8 +167,8 @@
     #say{left:20px;right:20px;top:auto;bottom:96px;transform:none;max-width:none;}
     #say .lead{font-size:21px;line-height:1.35;}
     #say .body{font-size:15px;line-height:1.65;margin-top:13px;}
-    #nav{left:20px;bottom:30px;gap:22px;}
-    #nav a{font-size:12.5px;padding-bottom:6px;}
+    #nav{left:20px;bottom:30px;gap:14px;}
+    #nav a{font-size:11.5px;letter-spacing:.15em;padding-bottom:6px;}
     #ctrl{right:18px;bottom:26px;gap:8px;}
     #ctrl button{height:44px;min-width:44px;border-radius:22px;padding:0 14px;font-size:12.5px;}
     #label{font-size:12px;padding:6px 11px;}
@@ -163,7 +200,7 @@
   <div id="label"><b>No. 000</b><span>—</span><i></i><u></u></div>
   <div class="ui" id="brand"><h1 class="mark">You Might Find It</h1><p class="sub">The Archive · 2018–20XX</p></div>
   <div class="ui" id="meta"><div><b id="count">—</b> works</div><div><b id="pcount">—</b> projects</div><div id="zoomlabel">×1.0</div></div>
-  <div class="ui" id="hint">click to <span>dig</span> · drag to explore · scroll or pinch to zoom</div>
+  <div class="ui" id="hint">click to <span>dig</span><span class="tail"> · drag to explore · scroll or pinch to zoom</span></div>
   <div class="ui" id="say">
     <div class="lead">Keep digging. You&rsquo;ll know it when you find it.</div>
     <div class="body"><i>It</i> is different for everyone, so the variable <i>x</i> is the
@@ -174,6 +211,7 @@
   <div class="ui" id="nav">
     <a href="https://youmightfindit.com/resume" target="_blank" rel="noopener">Résumé</a>
     <a href="https://youmightfindit.com/contact" target="_blank" rel="noopener">Contact</a>
+    <a href="https://github.com/gingahbman/you-might-find-it#readme" target="_blank" rel="noopener"><span class="lg">How this was built</span><span class="sm">Colophon</span></a>
   </div>
   <div class="ui" id="ctrl"><button id="reset">Reset</button><button id="zout" class="z" aria-label="Zoom out">–</button><button id="zin" class="z" aria-label="Zoom in">+</button></div>
 <script src="manifest.js?v=786071583"></script>
@@ -440,6 +478,8 @@ stage.addEventListener('wheel',e=>{e.preventDefault();zoomAt(e.clientX,e.clientY
    briefly. Double-click still dives, so a linked tile suppresses the dive rather than
    doing both, and a second open inside half a second is ignored. */
 let dragging=false,lx=0,ly=0,pressX=0,pressY=0,pressT=0,lastOpen=0;
+const COARSE=matchMedia('(pointer:coarse)').matches;
+let armed=null,armTimer=0;
 function linkUnder(e){
   if(!document.body.classList.contains('deep')) return null;
   /* e.target lies here: pointerdown captures the pointer to the stage (for smooth drags),
@@ -468,12 +508,24 @@ stage.addEventListener('click',e=>{
   if(performance.now()-pressT>600) return;                          // that was a hold
   const t=linkUnder(e);
   if(t){
+    /* A finger has no hover, so on touch the first tap on an armed work shows what it is
+       and the second opens it. Nobody gets thrown to another site by a tap they meant as a
+       dig, and they see the name before they commit. A mouse keeps its single click. */
+    if(COARSE && armed!==t){
+      armed=t;
+      showLabel(t,e.clientX,e.clientY,'tap again to open ↗');
+      clearTimeout(armTimer);
+      armTimer=setTimeout(()=>{armed=null;label.style.opacity='0';},4000);
+      return;
+    }
     const now=performance.now();
     if(now-lastOpen<500) return;                                    // one tab per double-tap
-    lastOpen=now;
+    lastOpen=now; armed=null; clearTimeout(armTimer);
     window.open(t.dataset.href,'_blank','noopener');
     return;
   }
+  armed=null; clearTimeout(armTimer);
+  if(COARSE) label.style.opacity='0';
   if(nearMark(e.clientX,e.clientY)) zoomAt(e.clientX,e.clientY,DIG);
 });
 /* Is the pointer on the mark, or close enough to count as "around" it? Screen point back
@@ -496,16 +548,23 @@ let isNear=false;
 function setNear(on){ if(on!==isNear){ isNear=on; stage.classList.toggle('near',on); } }
 stage.addEventListener('pointerleave',()=>setNear(false));
 
+/* One place that fills the label, so a touch tap can raise it exactly as a hover does. */
+function showLabel(t,x,y,verb){
+  label.style.left=x+'px'; label.style.top=y+'px';
+  label.querySelector('b').textContent='No. '+String(+t.dataset.i+1).padStart(3,'0');
+  label.querySelector('span').textContent=t.dataset.p;
+  label.querySelector('i').textContent=t.dataset.n;
+  label.querySelector('u').textContent = t.dataset.href
+    ? (verb || (document.body.classList.contains('deep')?'click to open ↗':'dig deeper to open'))
+    : '';
+  label.style.opacity='1';
+}
 stage.addEventListener('pointermove',e=>{
   setNear(nearMark(e.clientX,e.clientY));
-  if(!dragging){const t=e.target.closest&&e.target.closest('.tile');
-    if(t&&document.body.classList.contains('zoomed')){
-      label.style.left=e.clientX+'px';label.style.top=e.clientY+'px';
-      label.querySelector('b').textContent='No. '+String(+t.dataset.i+1).padStart(3,'0');
-      label.querySelector('span').textContent=t.dataset.p;
-      label.querySelector('i').textContent=t.dataset.n;
-      label.querySelector('u').textContent=t.dataset.href?(document.body.classList.contains('deep')?'click to open ↗':'dig deeper to open'):'';
-      label.style.opacity='1';}
+  if(!dragging){
+    if(COARSE) return;                       // touch drives the label from taps, not moves
+    const t=e.target.closest&&e.target.closest('.tile');
+    if(t&&document.body.classList.contains('zoomed')) showLabel(t,e.clientX,e.clientY);
     else label.style.opacity='0';
     return;}
   st.x+=e.clientX-lx;st.y+=e.clientY-ly;lx=e.clientX;ly=e.clientY;clampPan(st);});
@@ -545,6 +604,7 @@ function interacted(){if(!didI){didI=true;hint.style.opacity='0';}}
 
 /* ---------- render loop: grey at rest, colour as you dive ---------- */
 const zl=document.getElementById('zoomlabel'), say=document.getElementById('say');
+const root=document.documentElement; let lastPop=1.28, booted=false;
 function paint(){
   world.style.transform=`translate(-50%,-50%) translate(${cur.x}px,${cur.y}px) scale(${cur.s})`;
   /* Now that ×1 frames the mark itself rather than the whole canvas, the bloom has to
@@ -554,8 +614,12 @@ function paint(){
   colourEl.style.opacity=col.toFixed(3);
   document.body.classList.toggle('zoomed',col>0.4);
   document.body.classList.toggle('deep',t>=LINK_AT);
+  /* 1.28 while tiles are small, easing to 1.06 once they are large. Written only when it
+     actually moves, so this is not a style write every frame. */
+  const pop=Math.max(1.06, 1.28-Math.max(0,t-1.6)*0.028);
+  if(Math.abs(pop-lastPop)>0.004){ lastPop=pop; root.style.setProperty('--pop',pop.toFixed(3)); }
   colourEl.style.pointerEvents=col>0.4?'auto':'none';
-  say.style.opacity=col>0.4?'0':'1';
+  if(booted) say.style.opacity=col>0.4?'0':'1';
   zl.textContent='×'+t.toFixed(1);
   /* Trigger on the *target* scale, not the animated one. The piece opens on a pull-back
      from ×4, so testing the current scale fired the full-resolution load on first paint —
@@ -598,7 +662,13 @@ if(q.has('z')){
 }
 
 world.style.opacity='0'; world.classList.add('fade');
-requestAnimationFrame(()=>{world.style.opacity='1';frame();});
+document.body.classList.add('booting');
+requestAnimationFrame(()=>{
+  world.style.opacity='1'; frame();
+  /* the mark lands first; the chrome follows on its CSS delays */
+  setTimeout(()=>{ document.body.classList.remove('booting'); booted=true; }, RM?0:260);
+  setTimeout(()=>document.body.classList.add('entered'), RM?0:2200);   // stagger done
+});
 
 /* helper for screenshots */
 window.__tr={settle:()=>{for(let k=0;k<400;k++){cur.x+=(st.x-cur.x)*0.25;cur.y+=(st.y-cur.y)*0.25;cur.s+=(st.s-cur.s)*0.25;}
