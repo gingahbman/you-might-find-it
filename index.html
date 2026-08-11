@@ -112,7 +112,19 @@
   #hint{left:50%;bottom:34px;transform:translateX(-50%);text-align:center;
     font-size:clamp(11px,.8vw,12.5px);letter-spacing:.24em;
     text-transform:uppercase;color:#8b8778;transition:opacity .6s;}
-  #hint span{color:#e9e6df;}
+  #hint span{color:#e9c46a;}      /* gold = actionable, as on the open tag */
+  /* When relocated into the statement it stops being a fixed overlay and becomes a
+     button-shaped affordance. Gold is already the archive's "this is actionable" colour. */
+  #say #hint{position:static;transform:none;display:inline-block;margin:0 0 20px;
+    padding:10px 17px;border:1px solid rgba(233,196,106,.5);border-radius:999px;
+    color:#e9c46a;font-size:12px;letter-spacing:.2em;
+    animation:beckon 2.6s ease-in-out infinite;}
+  #say #hint span{color:#f4dfa8;}
+  @keyframes beckon{
+    0%,100%{box-shadow:0 0 0 0 rgba(233,196,106,.30);}
+    50%    {box-shadow:0 0 0 9px rgba(233,196,106,0);}
+  }
+  @media (prefers-reduced-motion: reduce){ #say #hint{animation:none;} }
   #hint .tail{color:#8b8778;}
   /* Between roughly 820 and 1180px the three bottom clusters fight for the same row, and
      the hint is the one that can afford to say less. */
@@ -163,7 +175,15 @@
     #brand .mark{font-size:17px;letter-spacing:.28em;}
     #brand .sub{font-size:11px;letter-spacing:.2em;margin-top:7px;}
     #meta{right:20px;top:22px;font-size:11px;letter-spacing:.16em;line-height:1.85;}
-    #hint{display:none;}                       /* no room, and touch explains itself */
+    /* Embedded, the host page supplies the wordmark and the menu. The counters move into
+       the space the wordmark vacated, away from a header's hamburger; the nav goes
+       entirely, since Résumé and Contact are already in the site menu above. */
+    body.embed #meta{left:20px;right:auto;text-align:left;top:20px;}
+    body.embed #nav{display:none;}
+    /* The hint used to be hidden here on the reasoning that touch explains itself. It
+       doesn't: touch tells you that you can tap, not that an abstract grey mark is worth
+       tapping. It now moves into the statement block (see relocateHint) and sits directly
+       above "Keep digging" as a pill — instruction, then invitation. */
     #say{left:20px;right:20px;top:auto;bottom:96px;transform:none;max-width:none;}
     #say .lead{font-size:21px;line-height:1.35;}
     #say .body{font-size:15px;line-height:1.65;margin-top:13px;}
@@ -605,6 +625,20 @@ addEventListener('keydown',e=>{
   e.preventDefault();
 });
 const hint=document.getElementById('hint');
+/* On a narrow screen the hint moves out of the bottom bar and into the statement block, so
+   it sits right above "Keep digging" and can never be pushed off-screen by a host page's
+   framing. Re-evaluated on resize because the breakpoint can be crossed by rotating. */
+function relocateHint(){
+  const box = document.getElementById('say');     // looked up here: `say` is declared below
+  const narrow = innerWidth<=820 || COARSE;
+  const inSay = hint.parentElement===box;
+  if(narrow && !inSay) box.insertBefore(hint, box.firstChild);
+  else if(!narrow && inSay) document.body.appendChild(hint);
+  /* "click" is wrong for a finger */
+  hint.firstChild.textContent = COARSE ? 'tap to ' : 'click to ';
+}
+relocateHint();
+addEventListener('resize', relocateHint);
 function interacted(){if(!didI){didI=true;hint.style.opacity='0';}}
 
 /* ---------- render loop: grey at rest, colour as you dive ---------- */
