@@ -189,6 +189,23 @@ changed could be served stale and hand out stale image URLs from inside.
   appears only on or near the mark: `nearMark()` maps the pointer back through the world
   transform to a grid cell and checks that cell plus a 46px halo, so the hot region is
   X-shaped rather than the mark's bounding box.
+- **The invitation.** On a pointer device the shovel cursor is itself the affordance. Touch
+  has no equivalent, so on narrow screens `relocateHint()` moves the hint out of the bottom
+  bar and into the statement block, where it becomes a pulsing pill reading *tap to dig*
+  directly above "Keep digging" — instruction, then invitation. It was previously hidden
+  below 820px on the reasoning that touch explains itself; it does not, and mobile visitors
+  had no indication the mark was interactive at all.
+
+### Embedding
+
+`?embed=1` suppresses the chrome a host page already provides: the wordmark always, and on
+narrow screens the Résumé/Contact links (the site menu has them) with the counters moved to
+the space the wordmark vacated, clear of a header's menu button.
+
+Sizing an embed is the host's job, but the piece cooperates: a resize before the first
+interaction re-fits to ×1, so a frame the host sizes *after* load doesn't get stuck at
+whatever scale the pre-sizing frame implied. After the first interaction a resize preserves
+the view instead, because by then there is something worth not disturbing.
 
 ## Layout
 
@@ -197,7 +214,7 @@ Three layouts, chosen by the shape of the viewport rather than by device:
 | viewport | layout |
 |---|---|
 | wide | statement in the X's left waist, full chrome |
-| narrow **and** portrait (≤820px, aspect ≤ 4/5) | statement stacked under the mark, `#world` nudged up, hint hidden, 44px touch targets |
+| narrow **and** portrait (≤820px, aspect ≤ 4/5) | statement stacked under the mark, `#world` nudged up, hint promoted into the statement as a pill, 44px touch targets |
 | short (≤560px tall) | statement narrowed into one clear column beside the mark |
 
 The statement sits vertically centred against the left edge because an X splays to its full
