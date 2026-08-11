@@ -190,11 +190,24 @@ changed could be served stale and hand out stale image URLs from inside.
   transform to a grid cell and checks that cell plus a 46px halo, so the hot region is
   X-shaped rather than the mark's bounding box.
 - **The invitation.** On a pointer device the shovel cursor is itself the affordance. Touch
-  has no equivalent, so on narrow screens `relocateHint()` moves the hint out of the bottom
-  bar and into the statement block, where it becomes a pulsing pill reading *tap to dig*
-  directly above "Keep digging" — instruction, then invitation. It was previously hidden
-  below 820px on the reasoning that touch explains itself; it does not, and mobile visitors
-  had no indication the mark was interactive at all.
+  has no equivalent, so on touch screens the plate advertises itself: until the first
+  interaction, light runs down all four arms of the X at once, tip to centre — tiles on
+  each arm's centre line glint in sequence, the way aisle lights walk you into a cinema.
+  It is the plate catching light (a brief brightness/warmth shift per tile), not an
+  overlay, and it never plays again after the first touch. Above the mark floats a bare
+  line of gold type, *tap to dig*, positioned just off the top row; tapping the words
+  performs the first dig, centred on the X. The hint was once hidden below 820px on the
+  reasoning that touch explains itself; it does not, and mobile visitors had no indication
+  the mark was interactive at all.
+- **The depth gauge.** On a phone the counters live in the statement block, which fades
+  once you are digging — exactly when depth becomes interesting. So the ×-readout leaves
+  the caption and surfaces as its own small gauge opposite Reset, visible only while
+  zoomed.
+- **Two leads.** The desktop statement keeps "Keep digging. You'll know it when you find
+  it.", which its paragraph leans on. The phone drops that paragraph, so its lead speaks
+  plainly — "Take a dig around. If something catches your eye, feel free to contact me
+  below." — with the counters and the Résumé/Contact links directly under it, embedded or
+  not, so "below" is always true.
 
 ### Embedding
 
@@ -214,7 +227,7 @@ Three layouts, chosen by the shape of the viewport rather than by device:
 | viewport | layout |
 |---|---|
 | wide | statement in the X's left waist, full chrome |
-| narrow **and** portrait (≤820px, aspect ≤ 4/5) | statement stacked under the mark, `#world` nudged up, hint promoted into the statement as a pill, 44px touch targets |
+| narrow **and** portrait (≤820px, aspect ≤ 4/5) | statement stacked under the mark, `#world` nudged up, hint floating above the mark, counters and nav folded into the statement, depth gauge opposite Reset, 44px touch targets |
 | short (≤560px tall) | statement narrowed into one clear column beside the mark |
 
 The statement sits vertically centred against the left edge because an X splays to its full
