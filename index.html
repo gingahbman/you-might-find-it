@@ -443,6 +443,7 @@ const io=new IntersectionObserver(es=>{
 function upgrade(){ if(watching) return; watching=true; nodes.forEach(n=>io.observe(n)); }
 
 /* ---------- viewport ---------- */
+let didI=false;                       // has the visitor touched anything yet?
 /* Reduced motion is a promise, not a suggestion: no opening pull-back, no idle breathing.
    Everything the visitor initiates still animates via the spring, which is theirs to make. */
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -462,8 +463,13 @@ function recalc(){
      On a big display you simply reach the ceiling sooner, which is right: the tiles are
      already enormous by then. */
   maxS=Math.min(fit*14, CELL_PX/(TILE*Math.min(3,devicePixelRatio||1)*HOVER_POP));
-  if(prev>0 && st.s>0){ const k=fit/prev; st.s*=k; cur.s*=k; st.x*=k; st.y*=k; cur.x*=k; cur.y*=k; }
-  else { st.s=fit; cur.s=RM?fit:fit*4.0; } // first sizing; reduced motion skips the pull-back
+  /* Preserving the visual scale across a resize is right once someone is exploring — the
+     view shouldn't jump under them. Before the first interaction there is no view state
+     worth keeping, so re-fit instead. An iframe sized by its host after load would
+     otherwise be stuck at whatever scale the pre-sizing frame implied. */
+  if(prev>0 && st.s>0 && didI){ const k=fit/prev; st.s*=k; cur.s*=k; st.x*=k; st.y*=k; cur.x*=k; cur.y*=k; }
+  else if(prev>0 && st.s>0){ st.s=fit; cur.s=fit; st.x=st.y=cur.x=cur.y=0; }
+  else { st.s=fit; cur.s=RM?fit:fit*4.0; }  // first sizing; reduced motion skips the pull-back
 }
 recalc(); addEventListener('resize',recalc);
 
@@ -598,7 +604,7 @@ addEventListener('keydown',e=>{
   }
   e.preventDefault();
 });
-let didI=false;const hint=document.getElementById('hint');
+const hint=document.getElementById('hint');
 function interacted(){if(!didI){didI=true;hint.style.opacity='0';}}
 
 /* ---------- render loop: grey at rest, colour as you dive ---------- */
