@@ -6,7 +6,9 @@ from PIL import Image, ImageStat, ImageFilter, ImageDraw, ImageFont
 import prepare as P
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = "/Users/sundeepbasi/Workbench/TIME CAPSULE/Microfiche Photos"
+SRC = os.environ.get("ARCHIVE_SRC",
+                     os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                  os.pardir, "Microfiche Photos"))
 tiles = json.loads(re.search(r"const TILES=(\[.*?\]);",
                              open(os.path.join(HERE, "site/manifest.js")).read(), re.S).group(1))
 inv = {r["rel"]: r for r in json.load(open(os.path.join(HERE, "inventory.json")))}

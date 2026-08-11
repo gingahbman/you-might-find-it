@@ -6,7 +6,9 @@ Writes inventory.json + prints a per-folder summary.
 import os, json, sys
 from PIL import Image, ImageStat
 
-SRC = "/Users/sundeepbasi/Workbench/TIME CAPSULE/Microfiche Photos"
+SRC = os.environ.get("ARCHIVE_SRC",
+                     os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                  os.pardir, "Microfiche Photos"))
 EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".bmp", ".tif", ".tiff"}
 
 rows = []

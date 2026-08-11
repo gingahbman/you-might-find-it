@@ -4,7 +4,9 @@ import os, json, math
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = "/Users/sundeepbasi/Workbench/TIME CAPSULE/Microfiche Photos"
+SRC = os.environ.get("ARCHIVE_SRC",
+                     os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                  os.pardir, "Microfiche Photos"))
 OUT = os.path.join(HERE, "sheets")
 os.makedirs(OUT, exist_ok=True)
 

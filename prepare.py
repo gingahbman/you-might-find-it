@@ -20,7 +20,9 @@ from projects import PROJECTS, HEROES, RENAME, EXCLUDE, LINKS, TITLES
 from writing import PASSAGES
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-SRC = "/Users/sundeepbasi/Workbench/TIME CAPSULE/Microfiche Photos"
+SRC = os.environ.get("ARCHIVE_SRC",
+                     os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                  os.pardir, "Microfiche Photos"))
 SITE = os.path.join(HERE, "site")
 # Rendered pixels per grid cell. This is the resolution ceiling of the whole piece: the
 # page refuses to zoom past what it buys (see maxS in index.html), so raising it buys
@@ -170,7 +172,8 @@ def fit_block(im, bw, bh):
 
 
 # ---------------------------------------------------------------- the writing, as type
-FONT_DIR = "/Users/sundeepbasi/Workbench/TIME CAPSULE/START/fonts"
+FONT_DIR = os.environ.get("ARCHIVE_FONTS",
+                          os.path.join(HERE, os.pardir, "START", "fonts"))
 PAPER, INK, MUTED, RULE = (235, 228, 214), (25, 26, 31), (129, 123, 108), (196, 187, 169)
 
 

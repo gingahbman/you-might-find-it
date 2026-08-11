@@ -14,7 +14,9 @@ Exposes PASSAGES: a list of dicts {project, title, body, attrib, kind, nth, src}
 """
 import os, re, glob, zipfile, html
 
-SRC = "/Users/sundeepbasi/Workbench/TIME CAPSULE/Microfiche Photos"
+SRC = os.environ.get("ARCHIVE_SRC",
+                     os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                  os.pardir, "Microfiche Photos"))
 
 
 def docx_paragraphs(path):
