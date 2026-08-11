@@ -217,8 +217,9 @@ weight than Times, and Sora runs wider with a taller x-height than Helvetica.
 ## The front door
 
 - **Meta/social**: description, og:title/description/image (1200×630 `og.jpg`, rendered
-  from the page itself), twitter:card, canonical, theme-color, `favicon.png`. Two absolute
-  URLs are marked `UPDATE-AT-DEPLOY` in the head.
+  from the page itself — re-run `shot_size.sh` at 1200×630 whenever the chrome changes),
+  twitter:card, canonical, theme-color, `favicon.png`. The name appears only in the meta
+  description: the page is signed by being at his address, not by a byline.
 - **Semantics/a11y**: the wordmark is an `h1`; zoom buttons have aria-labels; the stage has
   a `role="img"` description; focus-visible outlines on nav and buttons.
 - **Keyboard**: arrows pan, `+`/`−` zoom, `Escape`/`0` reset.

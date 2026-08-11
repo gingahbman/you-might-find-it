@@ -114,10 +114,6 @@
   /* Between roughly 820 and 1180px the three bottom clusters fight for the same row, and
      the hint is the one that can afford to say less. */
   @media (max-width:1180px){ #hint .tail{display:none;} }
-  /* Between 820 and 1080 the three bottom clusters are one long link away from touching.
-     "Colophon" is the shorter word and the righter one for the audience that clicks it. */
-  #nav a .sm{display:none;}
-  @media (max-width:1080px){ #nav a .lg{display:none;} #nav a .sm{display:inline;} }
   #ctrl{right:32px;bottom:28px;display:flex;gap:9px;align-items:center;}
   #ctrl button{height:42px;min-width:42px;border-radius:21px;cursor:pointer;padding:0 15px;
     background:rgba(20,22,27,.72);color:#e9e6df;border:1px solid rgba(233,230,223,.14);
@@ -136,8 +132,6 @@
     color:#94907f;letter-spacing:.004em;}
   #say .body em{color:#c2bdad;font-style:normal;}
   #say .body i{font-style:italic;color:#c2bdad;}   /* the variable, set as a variable */
-  #say .sig{margin-top:16px;font-family:"Archive Serif",Georgia,serif;font-size:clamp(12.5px,.86vw,14px);
-    color:#7d7969;letter-spacing:.04em;}
   #nav{left:38px;bottom:34px;display:flex;gap:24px;}
   #nav a{font-size:clamp(12px,.88vw,13.5px);letter-spacing:.22em;text-transform:uppercase;color:#8b8778;
     text-decoration:none;border-bottom:1px solid rgba(139,135,120,.35);padding-bottom:4px;transition:.15s;}
@@ -170,8 +164,8 @@
     #say{left:20px;right:20px;top:auto;bottom:96px;transform:none;max-width:none;}
     #say .lead{font-size:21px;line-height:1.35;}
     #say .body{font-size:15px;line-height:1.65;margin-top:13px;}
-    #nav{left:20px;bottom:30px;gap:14px;}
-    #nav a{font-size:11.5px;letter-spacing:.15em;padding-bottom:6px;}
+    #nav{left:20px;bottom:30px;gap:22px;}
+    #nav a{font-size:12.5px;padding-bottom:6px;}
     #ctrl{right:18px;bottom:26px;gap:8px;}
     #ctrl button{height:44px;min-width:44px;border-radius:22px;padding:0 14px;font-size:12.5px;}
     #label{font-size:12px;padding:6px 11px;}
@@ -209,12 +203,10 @@
     <div class="body"><i>It</i> is different for everyone, so the variable <i>x</i> is the
       honest way to write it. I don&rsquo;t know what yours is. But if it has anything to do
       with feelings and human connection, <em>I&rsquo;d love to help you find it</em>.</div>
-    <div class="sig">— Sundeep Basi</div>
   </div>
   <div class="ui" id="nav">
     <a href="https://youmightfindit.com/resume" target="_blank" rel="noopener">Résumé</a>
     <a href="https://youmightfindit.com/contact" target="_blank" rel="noopener">Contact</a>
-    <a href="https://github.com/gingahbman/you-might-find-it#readme" target="_blank" rel="noopener"><span class="lg">How this was built</span><span class="sm">Colophon</span></a>
   </div>
   <div class="ui" id="ctrl"><button id="reset">Reset</button><button id="zout" class="z" aria-label="Zoom out">–</button><button id="zin" class="z" aria-label="Zoom in">+</button></div>
 <script src="manifest.js?v=746961450"></script>
