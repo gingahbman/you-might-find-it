@@ -98,6 +98,9 @@
   body.zoomed #brand:hover,body.zoomed #meta:hover,body.zoomed #nav:hover{opacity:1;}
   body.zoomed #ctrl{opacity:.72;}
   body.zoomed #ctrl:hover{opacity:1;}
+  /* ?embed=1 — the host page already carries the wordmark, so the piece drops its own
+     rather than stating it twice. Everything else stays. */
+  body.embed #brand{display:none;}
   #brand{left:38px;top:32px;}
   #brand .mark{font-family:"Archive Serif",Georgia,serif;font-size:clamp(19px,1.5vw,24px);
     letter-spacing:.34em;text-transform:uppercase;padding-left:.34em;font-weight:400;}
@@ -651,6 +654,7 @@ function frame(){
 }
 /* ?z=4&px=-120&py=80 opens straight at a view — used for stills and deep links */
 const q=new URLSearchParams(location.search);
+if(q.get('embed')==='1') document.body.classList.add('embed');
 if(q.has('z')){
   st.s=fit*parseFloat(q.get('z')); st.x=+(q.get('px')||0); st.y=+(q.get('py')||0);
   clampPan(st); cur.x=st.x; cur.y=st.y; cur.s=st.s; interacted();
